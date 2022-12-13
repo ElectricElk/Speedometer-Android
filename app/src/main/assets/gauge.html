@@ -1,0 +1,63 @@
+<<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Gauge Example</title>
+</head>
+<body>
+<canvas id="gauge-chart" width="300" height="300"></canvas>
+
+<script>
+        // Initialize the gauge chart
+        var canvas = document.getElementById("gauge-chart");
+        var ctx = canvas.getContext("2d");
+        var x = canvas.width / 2;
+        var y = canvas.height / 2;
+        var radius = x - 30;
+        var startAngle = 0.75 * Math.PI;
+        var endAngle = 0.25 * Math.PI;
+        var counterClockwise = false;
+        var guageMax = 35;
+        // Function to update the gauge's value
+        function updateGaugeValue(value) {
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Calculate the end angle for the gauge
+            var endAngle = (value / guageMax) * 2 * Math.PI + startAngle;
+
+            // Draw the gauge
+            ctx.beginPath();
+            ctx.arc(x, y, radius, startAngle, endAngle, counterClockwise);
+            ctx.lineWidth = 30;
+            ctx.strokeStyle = "#f00";
+            ctx.stroke();
+
+            // display the value
+            ctx.font = "50px Roboto";
+            ctx.fillText(value, x - 20, y + 10);
+        }
+    </script>
+</body>
+</html>
+
+<!--<canvas id="gauge" width="200" height="200"></canvas>-->
+
+<!--<script>-->
+<!--  // get the canvas element and its context-->
+<!--  var canvas = document.getElementById('gauge');-->
+<!--  var context = canvas.getContext('2d');-->
+<!--  var speed_val = 0;-->
+<!--  // draw the gauge background-->
+<!--  context.beginPath();-->
+<!--  context.arc(100, 100, 80, 0, 2 * Math.PI);-->
+<!--  context.lineWidth = 20;-->
+<!--  context.strokeStyle = '#ccc';-->
+<!--  context.stroke();-->
+
+<!--  // draw the gauge value-->
+<!--  context.beginPath();-->
+<!--  context.arc(100, 100, 80, -0.5 * Math.PI, -0.5 * Math.PI + (speed_val / 100) * 2 * Math.PI);-->
+<!--  context.lineWidth = 20;-->
+<!--  context.strokeStyle = '#333';-->
+<!--  context.stroke();-->
+<!--</script>-->

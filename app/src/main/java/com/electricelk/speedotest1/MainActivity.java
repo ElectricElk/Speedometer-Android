@@ -12,6 +12,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.webkit.WebView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cardiomood.android.controls.gauge.SpeedometerGauge;
@@ -19,12 +21,19 @@ import com.cardiomood.android.controls.gauge.SpeedometerGauge;
 public class MainActivity extends AppCompatActivity {
 
     private SpeedometerGauge speedometer;
+//    private WebView webView;
+    private ProgressBar speedBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("SpeedoTest1", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        speedBar = (ProgressBar) findViewById(R.id.speedBar);
+//        webView = findViewById(R.id.webview);
+//        webView.getSettings().setJavaScriptEnabled(true);
+//        webView.clearCache(true);
+//        webView.loadUrl("file:///android_asset/gauge.html");
 
         speedometer = (SpeedometerGauge) findViewById(R.id.speedometer);
         speedometer.setMaxSpeed(50);
@@ -60,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
                             1000, 300);
 
                     speed.setText(String.valueOf(metersPerSecondToMilesPerHour(location.getSpeed())));
+
+//                    String jsUpdate = "javascript: var speed_val=";
+//                    String jsFunction = "updateGaugeValue(" + String.valueOf(metersPerSecondToMilesPerHour(location.getSpeed())) + ")";
+//                    webView.loadUrl("javascript: " + jsFunction);
+                    speedBar.setProgress((int) metersPerSecondToMilesPerHour(location.getSpeed()));
+
+
                 }
 
                 @Override
