@@ -12,31 +12,22 @@
         android:orientation="vertical"
         tools:context=".MainActivity">
 
+
+        <!-- create a webview for js guages-->
+
+        <WebView
+            android:id="@+id/webview"
+            android:layout_width="match_parent"
+            android:layout_height="257dp" />
+
         <TextView
-            android:id="@+id/speed"
-            android:layout_width="wrap_content"
+            android:id="@+id/tripDistance"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/technology"
+            android:text="Trip Distance: "
             android:textSize="20sp"
-            android:text="Current speed: 0 m/s" />
-
-        <com.cardiomood.android.controls.gauge.SpeedometerGauge
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:padding="8dp"
-            android:id="@+id/speedometer" />
-
-        <ProgressBar
-            android:id="@+id/speedBar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="234dp"
-            android:max="35" />
-
-        <!-- create a webview for new speedo-->
-<!--        <WebView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:id="@+id/webview" />-->
+            app:fontFamily="@font/technology" />
 
     </LinearLayout>
 

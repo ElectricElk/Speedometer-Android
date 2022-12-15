@@ -6,50 +6,39 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cardiomood.android.controls.gauge.SpeedometerGauge;
 
+import java.time.Duration;
+import java.time.Instant;
+
+
 public class MainActivity extends AppCompatActivity {
 
     private SpeedometerGauge speedometer;
-//    private WebView webView;
-    private ProgressBar speedBar;
+    private WebView webView;
+
+    private Instant lastUpdate = Instant.now();
+    private double lastSpeed = 0;
+    private double thisTrip = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("SpeedoTest1", "onCreate");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        speedBar = (ProgressBar) findViewById(R.id.speedBar);
-//        webView = findViewById(R.id.webview);
-//        webView.getSettings().setJavaScriptEnabled(true);
-//        webView.clearCache(true);
-//        webView.loadUrl("file:///android_asset/gauge.html");
-
-        speedometer = (SpeedometerGauge) findViewById(R.id.speedometer);
-        speedometer.setMaxSpeed(50);
-        speedometer.setLabelConverter(new SpeedometerGauge.LabelConverter() {
-            @Override
-            public String getLabelFor(double progress, double maxProgress) {
-                return String.valueOf((int) Math.round(progress));
-            }
-        });
-        speedometer.setMaxSpeed(40);
-        speedometer.setMajorTickStep(5);
-        speedometer.setMinorTicks(4);
-        speedometer.addColoredRange(0, 19, Color.GREEN);
-        speedometer.addColoredRange(20, 28, Color.YELLOW);
-        speedometer.addColoredRange(29, 40, Color.RED);
-        speedometer.setSpeed(0, 1000, 300);
+        webView = findViewById(R.id.webview);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.clearCache(true);
+        webView.loadUrl("file:///android_asset/gauge.html");
 
         // Check if the ACCESS_FINE_LOCATION permission is granted
         Integer REQUEST_CODE = 1;
@@ -63,18 +52,24 @@ public class MainActivity extends AppCompatActivity {
             LocationListener locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
-                    TextView speed = findViewById(R.id.speed);
-                    speedometer.setSpeed(
-                            metersPerSecondToMilesPerHour(location.getSpeed()),
-                            1000, 300);
+                    Instant thisUpdate = Instant.now();
+                    TextView tripText = findViewById(R.id.tripDistance);
 
-                    speed.setText(String.valueOf(metersPerSecondToMilesPerHour(location.getSpeed())));
+                    double thisSpeed = metersPerSecondToMilesPerHour(location.getSpeed());
 
-//                    String jsUpdate = "javascript: var speed_val=";
-//                    String jsFunction = "updateGaugeValue(" + String.valueOf(metersPerSecondToMilesPerHour(location.getSpeed())) + ")";
-//                    webView.loadUrl("javascript: " + jsFunction);
-                    speedBar.setProgress((int) metersPerSecondToMilesPerHour(location.getSpeed()));
+                    double distance = Duration.between(lastUpdate, thisUpdate).toMillis()/1000f * lastSpeed * 0.00027777777777778;
 
+//                    Log.d("SpeedoTest1", "Trip: " + thisTrip + " Distance: " + distance + " Speed: " + thisSpeed);
+
+                    thisTrip += distance;
+                    tripText.setText("Trip Distance: " + String.format("%.2f", thisTrip));
+
+                    lastSpeed = thisSpeed;
+                    lastUpdate = thisUpdate;
+
+                    String speedText = String.format("%.1f", thisSpeed);
+                    String jsUpdate = "javascript: drawChart(" + speedText + ");";
+                    webView.evaluateJavascript(jsUpdate, null);
 
                 }
 
@@ -90,7 +85,9 @@ public class MainActivity extends AppCompatActivity {
                 public void onProviderDisabled(String provider) {
                 }
             };
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0.1f, locationListener);
+
+
         }
     }
 
