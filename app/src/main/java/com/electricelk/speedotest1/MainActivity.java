@@ -11,6 +11,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.TextView;
 
@@ -34,11 +35,13 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         webView = findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.clearCache(true);
         webView.loadUrl("file:///android_asset/gauge.html");
+//        webView.loadUrl("file:///android_asset/microtronics.html");
 
         // Check if the ACCESS_FINE_LOCATION permission is granted
         Integer REQUEST_CODE = 1;
@@ -67,8 +70,10 @@ public class MainActivity extends AppCompatActivity {
                     lastSpeed = thisSpeed;
                     lastUpdate = thisUpdate;
 
-                    String speedText = String.format("%.1f", thisSpeed);
+                    String speedText = String.format("%.2f", thisSpeed);
                     String jsUpdate = "javascript: drawChart(" + speedText + ");";
+//                    String jsUpdate = "javascript: $(\"#GaugeMeter_1\").gaugeMeter({percent:" + speedText + "});";
+
                     webView.evaluateJavascript(jsUpdate, null);
 
                 }
