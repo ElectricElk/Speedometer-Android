@@ -1,7 +1,7 @@
 # Speedometer-Android
 
 <!-- ![Speedometer-Android Logo](logo.png) -->
-![Speedometer-Android Screenshot](docs/images/Screen Shot.png)
+![Speedometer-Android Screenshot](https://github.com/ElectricElk/Speedometer-Android/blob/68e283ede75b6c2d12a32c8b61a0ad74384b0d12/docs/images/Screen%20Shot.png)
 
 Speedometer-Android is an open-source Android application designed for micromobility users. It functions as a speedometer, providing real-time speed 
 information to users. The app incorporates `d3js` for creating visually appealing and interactive gauges.
