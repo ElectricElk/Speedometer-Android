@@ -17,12 +17,10 @@ information to users. The app incorporates `d3js` for creating visually appealin
 
 The immediate roadmap for Speedometer-Android includes the following features and enhancements:
 
-1. **Multiple Bike Selector**: Add a selector to allow users to switch between multiple bikes seamlessly, ensuring accurate speed measurements for different 
-2. micromobility devices.
-3. **Customizable Gauges and Dashboards**: Enable users to personalize the app by customizing gauges and dashboards according to their preferences, providing
-4.  a more personalized experience.
-5. **Bluetooth Battery Monitor**: Integrate a Bluetooth battery monitor to display the battery level of connected micromobility devices, ensuring users are 
-6. aware of their device's power status.
+1. **Multiple Bike Selector**: Add a selector to allow users to switch between multiple bikes seamlessly, ensuring accurate speed measurements for different micromobility devices.
+3. **Customizable Gauges and Dashboards**: Enable users to personalize the app by customizing gauges and dashboards according to their preferences, providing a more personalized experience.
+5. **Bluetooth Battery Monitor**: Integrate a Bluetooth battery monitor to display the battery level of connected micromobility devices, ensuring users are  aware of their device's power status.
+6. **Automated Testing**: Always on the roadmap. Occassionally implemented. 
 
 ## Contributing
 
