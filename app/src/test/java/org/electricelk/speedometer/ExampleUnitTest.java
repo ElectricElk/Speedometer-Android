@@ -1,4 +1,4 @@
-package com.electricelk.speedotest1;
+package org.electricelk.speedometer;
 
 import org.junit.Test;
 

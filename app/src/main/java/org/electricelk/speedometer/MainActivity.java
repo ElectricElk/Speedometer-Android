@@ -1,4 +1,4 @@
-package com.electricelk.speedotest1;
+package org.electricelk.speedometer;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -11,12 +11,13 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.cardiomood.android.controls.gauge.SpeedometerGauge;
+
+import org.electricelk.speedometer.R;
 
 import java.time.Duration;
 import java.time.Instant;
