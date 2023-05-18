@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private Instant lastUpdate = Instant.now();
     private double lastSpeed = 0;
     private double thisTrip = 0;
+    private double totalDistance = 0;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +40,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        sharedPreferences = getPreferences(MODE_PRIVATE);
+        totalDistance = sharedPreferences.getFloat("totalDistance", 0);
+
         webView = findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.clearCache(true);
         webView.loadUrl("file:///android_asset/gauge.html");
-//        webView.loadUrl("file:///android_asset/microtronics.html");
 
         // Check if the ACCESS_FINE_LOCATION permission is granted
         Integer REQUEST_CODE = 1;
@@ -57,22 +62,23 @@ public class MainActivity extends AppCompatActivity {
                 public void onLocationChanged(Location location) {
                     Instant thisUpdate = Instant.now();
                     TextView tripText = findViewById(R.id.tripDistance);
+                    TextView totalText = findViewById(R.id.totalDistance);
 
                     double thisSpeed = metersPerSecondToMilesPerHour(location.getSpeed());
 
                     double distance = Duration.between(lastUpdate, thisUpdate).toMillis()/1000f * lastSpeed * 0.00027777777777778;
 
-//                    Log.d("SpeedoTest1", "Trip: " + thisTrip + " Distance: " + distance + " Speed: " + thisSpeed);
-
                     thisTrip += distance;
                     tripText.setText("Trip Distance: " + String.format("%.2f", thisTrip));
+
+                    totalDistance += distance;
+                    totalText.setText("Total Distance: " + String.format("%.2f", totalDistance));
 
                     lastSpeed = thisSpeed;
                     lastUpdate = thisUpdate;
 
                     String speedText = String.format("%.2f", thisSpeed);
                     String jsUpdate = "javascript: drawChart(" + speedText + ");";
-//                    String jsUpdate = "javascript: $(\"#GaugeMeter_1\").gaugeMeter({percent:" + speedText + "});";
 
                     webView.evaluateJavascript(jsUpdate, null);
 
@@ -98,5 +104,15 @@ public class MainActivity extends AppCompatActivity {
 
     int metersPerSecondToMilesPerHour(double metersPerSecond) {
         return (int) (metersPerSecond * 2.23694);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Save totalDistance to SharedPreferences when the app is paused
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putFloat("totalDistance", (float) totalDistance);
+        editor.apply();
     }
 }

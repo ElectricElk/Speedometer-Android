@@ -13,7 +13,7 @@
         tools:context=".MainActivity">
 
 
-        <!-- create a webview for js guages-->
+        <!-- create a webview for js gauges-->
 
         <WebView
             android:id="@+id/webview"
@@ -26,6 +26,15 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/technology"
             android:text="Trip Distance: "
+            android:textSize="20sp"
+            app:fontFamily="@font/technology" />
+
+        <TextView
+            android:id="@+id/totalDistance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/technology"
+            android:text="Total Distance: "
             android:textSize="20sp"
             app:fontFamily="@font/technology" />
 

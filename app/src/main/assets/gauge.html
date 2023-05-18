@@ -1,95 +1,149 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <style>
-            .gauge {
-                width: 100%;
-                height: 100%;
-                position: relative;
-            }
-            .gauge .needle {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                width: 0;
-                height: 0;
-                border-left: 10px solid transparent;
-                border-right: 10px solid transparent;
-                border-bottom: 30px solid red;
-                margin-top: -30px;
-                margin-left: -10px;
-                transform-origin: 50% 100%;
-                transform: rotate(0deg);
-                transition: transform 0.5s;
-            }
-            #outer-div {
-                width: 100%;
-                text-align: center;
-                background-color: #71797E
-              }
-              #chart_div {
-                display: inline-block;
-                margin: 0 auto;
-                padding: 3px;
-                background-color: #71797E
-              }
-        </style>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {'packages':['gauge']});
-      google.charts.setOnLoadCallback(initChart);
-
-<!--        var chart;-->
-
-        function initChart() {
-            console.log("initChart");
-            window.chart = new google.visualization.Gauge(document.getElementById('chart_div'));
-<!--            google.visualization.events.addListener(chart, 'ready', function () {-->
-<!--                Array.prototype.forEach.call(container.getElementsByTagName('circle'),-->
-<!--                function(circle) {-->
-<!--                  if (circle.getAttribute('fill') === '#4684ee') {-->
-<!--                    circle.setAttribute('fill', '#5e35b1');-->
-<!--                  }-->
-<!--               });-->
-<!--            Array.prototype.forEach.call(container.getElementsByTagName('path'), function(path) {-->
-<!--              if (path.getAttribute('stroke') === '#c63310') {-->
-<!--                path.setAttribute('stroke', '#00bcd4');-->
-<!--                path.setAttribute('fill', '#00bcd4');-->
-<!--              }-->
-<!--            });-->
-            console.log("chart ready");
-          drawChart(0);
-        }
-
-
-
-      function drawChart(speed) {
-        window.data = new google.visualization.arrayToDataTable([
-                  ['Label', 'Value'],
-                  ['MPH', speed],
-                ]);
-
-        var options = {
-          width: 240,
-          height: 240,
-          redFrom: 21, redTo: 30,
-          yellowFrom:15, yellowTo: 20,
-          minorTicks: 5,
-          max: 30
-        };
-
-
-        chart.draw(window.data, options);
+<head>
+    <meta charset="utf-8">
+    <title>Gauge Chart with D3.js</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+    #outer-div {
+      width: 100%;
+      text-align: center;
+      background-color: #71797E;
+    }
+    #chart_div {
+      display: inline-block;
+      margin: 0 auto;
+      padding: 3px;
+      background-color: #71797E;
+    }
+    .gauge {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    .gauge .needle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 30px solid red;
+      margin-top: -30px;
+      margin-left: -10px;
+      transform-origin: 50% 100%;
+      transform: rotate(0deg);
+      transition: transform 0.5s;
     }
 
+  @font-face {
+    font-family: "DS-Digital";
+    src: url("file:///android_asset/fonts/lcd/DS-DIGI.TTF");
+  }
 
+  .value-text {
+    font-family: "DS-Digital";
+    font-size: 60px;
+    font-weight: normal;
+    fill: orange;
 
+  }
 
-    </script>
+    </style>
+
 </head>
-<body style="background-color:DimGray">
+<body style="background-color:LightGray">
 <div id="outer-div">
-    <div style="align:center" id="chart_div" />
+    <div id="chart_div"></div>
 </div>
+<script>
+    const width = 240;
+    const height = 240;
+    const margin = 20;
+    const tau = 2 * Math.PI;
+    const redFrom = 21;
+    const redTo = 30;
+    const yellowFrom = 15;
+    const yellowTo = 20;
+    const max = 30;
 
+    const svg = d3.select('#chart_div')
+      .append('svg')
+      .attr('width', width + margin * 2)
+      .attr('height', height + margin * 2);
+
+    const gauge = svg.append('g')
+      .attr('class', 'gauge')
+      .attr('transform', `translate(${margin}, ${margin})`);
+
+    const arc = d3.arc()
+      .innerRadius(width / 2 - 30)
+      .outerRadius(width / 2 - 10)
+      .startAngle(0);
+
+    const background = gauge.append('path')
+      .datum({endAngle: tau})
+      .attr('class', 'background')
+      .attr('d', arc);
+
+    const foreground = gauge.append('path')
+      .datum({endAngle: 0})
+      .attr('class', 'foreground')
+      .attr('d', arc);
+
+    const valueText = gauge.append('text')
+
+      .attr('class', 'value-text')
+      .attr('x', width / 10)
+      .attr('y', height / 7)
+      .attr('text-anchor', 'middle')
+      .attr('dy', '0.35em');
+
+<!--    const label = gauge.append('text')-->
+<!--      .attr('class', 'label')-->
+<!--      .attr('x', width / 8)-->
+<!--      .attr('y', height / 7 + 20)-->
+<!--      .attr('text-anchor', 'middle')-->
+<!--      .text('MPH');-->
+
+    const needle = gauge.append('line')
+      .attr('class', 'needle')
+      .attr('x1', width / 2)
+      .attr('y1', height / 2)
+      .attr('x2', width / 2)
+      .attr('y2', height / 2 - width / 2 +   40)
+  .attr('transform', `rotate(0, ${width / 2}, ${height / 2})`);
+
+function updateGauge(speed) {
+  const angle = (speed / max) * tau;
+  const color = speed >= redFrom ? 'red' : speed >= yellowFrom ? 'orange' : 'green';
+
+  foreground.transition()
+    .duration(500)
+    .attrTween('d', (d) => {
+      const interpolate = d3.interpolate(d.endAngle, angle);
+      return (t) => {
+        d.endAngle = interpolate(t);
+        return arc(d);
+      };
+    })
+    .style('fill', color);
+
+  needle.transition()
+    .duration(500)
+    .attr('transform', `rotate(${angle * 180 / Math.PI}, ${width / 2}, ${height / 2})`);
+
+  valueText.text(speed.toFixed(1));
+}
+
+updateGauge(0);
+
+function drawChart(speed) {
+  updateGauge(speed);
+}
+
+
+ </script>
 </body>
 </html>
